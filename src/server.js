@@ -21,7 +21,13 @@ app.get('/readyz', (_req, res) => {
 
 app.use('/webhooks', webhooksRouter);
 
-app.listen(config.port, () => {
-  const providers = Object.keys(registry).join(', ');
-  console.log(`[jobs-webhooks] ouvindo na porta ${config.port} — provedores registrados: ${providers}`);
-});
+// Na Vercel (preset Express, serverless) o app é exportado e o listen fica por
+// conta da plataforma. Localmente/Docker subimos o servidor nós mesmos.
+if (!process.env.VERCEL) {
+  app.listen(config.port, () => {
+    const providers = Object.keys(registry).join(', ');
+    console.log(`[jobs-webhooks] ouvindo na porta ${config.port} — provedores registrados: ${providers}`);
+  });
+}
+
+export default app;
